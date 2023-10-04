@@ -1,5 +1,6 @@
 // Create the extension div
 const extensionDiv = document.createElement('div');
+extensionDiv.style.color = 'red';
 extensionDiv.style.position = 'fixed';
 extensionDiv.style.top = '0';
 extensionDiv.style.right = '0';
