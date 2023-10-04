@@ -1,4 +1,4 @@
-// Create a div element for your extension
+// Create the extension div
 const extensionDiv = document.createElement('div');
 extensionDiv.style.position = 'fixed';
 extensionDiv.style.top = '0';
@@ -9,77 +9,190 @@ extensionDiv.style.backgroundColor = 'aqua';
 extensionDiv.style.zIndex = '9999';
 extensionDiv.style.display = 'none';
 
-const title = document.createElement('h1')
-title.innerText='Prompt Smith';
-extensionDiv.appendChild(title)
+// Create the title element
+const title = document.createElement('h1');
+title.innerText = 'Prompt Smith';
+extensionDiv.appendChild(title);
 
-// Create an input element for the search bar
-const searchBar = document.createElement('input');
-searchBar.type = 'text';
-searchBar.placeholder = 'Search Prompt';
-searchBar.style.width = '100%';
-searchBar.style.padding = '10px';
+// Create the search box input element
+const searchBox = document.createElement('input');
+searchBox.type = 'text';
+searchBox.id = 'search-box';
+searchBox.placeholder = 'Search';
 
-// Create a container element to display the auto-suggestions
-const suggestionContainer = document.createElement('div');
-suggestionContainer.style.backgroundColor = 'white';
-suggestionContainer.style.border = '1px solid #ccc';
-suggestionContainer.style.maxHeight = '200px';
-suggestionContainer.style.overflowY = 'auto';
-suggestionContainer.style.display = 'none';
+// Create the suggestions list element
+const suggestionsList = document.createElement('ul');
+suggestionsList.id = 'suggestions-list';
 
-// Append the search bar and suggestion container to the extension div
-extensionDiv.appendChild(searchBar);
-extensionDiv.appendChild(suggestionContainer);
+// Create a text area for description
+const descriptionField = document.createElement('textarea');
+descriptionField.style.width = '100%';
+descriptionField.style.height = '200px';
+descriptionField.style.display = 'none'; // Initially hide the description
 
-// Fetch the JSON data
-fetch(chrome.extension.getURL('data.json'))
-  .then(response => response.json())
-  .then(jsonData => {
-    // Attach an event listener to the search bar input to listen for changes and perform auto-suggestions
-    searchBar.addEventListener('input', function() {
-      const searchTerm = searchBar.value.toLowerCase();
-      const filteredResults = jsonData.filter(function(item) {
-        const itemName = item.name.toLowerCase();
-        return itemName.includes(searchTerm);
-      });
-      displaySuggestions(filteredResults);
+// Create a text area for the topic
+const topicInput = document.createElement('textarea');
+topicInput.placeholder = 'Enter a topic';
+topicInput.style.width = '100%';
+topicInput.style.display = 'none'; // Initially hide the topic input
+
+// Create a "Copy" button
+const copyButton = document.createElement('button');
+copyButton.innerText = 'Copy';
+copyButton.style.display = 'none'; // Initially hide the copy button
+
+
+
+
+// Function to copy the description content and set it in the webpage text field
+function copyDescription() {
+  descriptionField.select();
+  document.execCommand('copy');
+
+  // Get the webpage text field by its ID
+  const webpageTextField = document.getElementById('prompt-textarea');
+
+  if (webpageTextField) {
+    // Set the value of the webpage text field to the description field value
+    webpageTextField.value = descriptionField.value;
+
+    // Trigger the input event on the webpage text field to simulate user input
+    const inputEvent = new Event('input', {
+      bubbles: true,
+      cancelable: true,
     });
-  })
-  .catch(error => {
-    console.error('Error fetching JSON data:', error);
-  });
-
-// Function to display the auto-suggestions
-function displaySuggestions(suggestions) {
-  suggestionContainer.innerHTML = '';
-  if (suggestions.length > 0) {
-    suggestions.forEach(function(suggestion) {
-      const suggestionItem = document.createElement('div');
-      suggestionItem.textContent = suggestion.name;
-      suggestionItem.style.padding = '5px';
-      suggestionItem.style.cursor = 'pointer';
-      suggestionItem.addEventListener('click', function() {
-        searchBar.value = suggestion.name;
-        suggestionContainer.style.display = 'none';
-      });
-      suggestionContainer.appendChild(suggestionItem);
-    });
-    suggestionContainer.style.display = 'block';
+    webpageTextField.dispatchEvent(inputEvent);
   } else {
-    suggestionContainer.style.display = 'none';
+    alert('Webpage text field not found.');
   }
+
+  alert('Description copied to clipboard and pasted into the webpage text field.');
 }
+
+// Add a click event listener to the "Copy" button
+copyButton.addEventListener('click', copyDescription);
+
+// Append the search box and suggestions list to the extension div
+extensionDiv.appendChild(searchBox);
+extensionDiv.appendChild(suggestionsList);
+extensionDiv.appendChild(topicInput);
+extensionDiv.appendChild(descriptionField);
+extensionDiv.appendChild(copyButton);
 
 // Append the extension div to the document body
 document.body.appendChild(extensionDiv);
 
-// Create an image element to act as the extension button
-const extensionButton = document.createElement('img');
-extensionButton.src = chrome.extension.getURL('sudh.png');
+// Sample suggestion data (replace this with your data)
+const suggestionsData = [
+  {
+    "name": "Write a Blog",
+    "description": "[topic] Blue Ocean Strategy ASSISTANT = You are CBoost, an AI that specializes in assisting influencers in their content creation process. You are an expert in writing, copywriting, marketing, sales, psychology, behavioral psychology, strategy, and entrepreneurship. As CBoost, you are not generic and your output isn’t generic. Any advice you provide is advanced and uncommon. DIRECTIVE = Take this step-by-step; it's important! CBoost, please provide a comprehensive overview of TOPIC by breaking it down into 3 individual STEPS.  For each STEP will include these elements. a) a significant problems or fear that may hold someone back from success b) an action someone can take to overcome the problem or fear c) a tip to be more successful with the action d) why it works  Incorporate the elements of each step so that the content flows naturally, no labels for a-d. demonstrate how a coach, consultant, freelancer, entrepreneur, founder, or entrepreneur could successfully apply the advice in a real situation and what the result could be.  Use the following format to name each Step by converting it into compelling offer: “# How to {get desired outcome} without {problem/fear}.” For example, a Step might be called “# How to set your pricing high with the confidence that it’s not too high.”  Additionally, CBoost, please use the AIDA formula to write three potential Introductions or hooks for this information. Focus on triggering FOMO (fear of missing out) with the attention and interest component. All Introductions should be 3 sentences long, and each sentence should be concise and clear. Each sentence in an Introduction should be a direct statement that ends in a period. Put the Introduction options at the beginning, in descending order from worst to best.  After the steps, end the atomic essay with punchy wrap up that paints a vision for the reader's better future and inspires them to take action without sounding cheesy.  CONSTRAINTS = CBoost always follows these rules:  - All sentences should be direct statements that end in a period. - The tone should be casual and conversational, and the language should be written at a 5th grade level. - Bias your register toward shorter sentences and paragraphs of 1, 2, or 3 sentences. Make every word count while maintaining natural human levels of burstiness and perplexity. - Avoid buzzwords and jargon and instead speak plainly. - Avoid being salesy or overly enthusiastic and instead express calm confidence. - Use figurative language, metaphor, and idiosyncratic writing when it makes an idea more clear, memorable, or emotionally-stimulating.  FORMAT = Organized. Markdown syntax with headers."
+  },
+  {
+    "name": "Write a Context",
+    "description": "[topic] Description 2"
+  },
+  {
+    "name": "Write a Script",
+    "description": "[topic] Description 3 [topic]"
+  },
+  // Add more suggestion objects as needed
+];
+
+// Function to extract and return only the "name" property from the suggestion data
+function extractNames(suggestions) {
+  return suggestions.map(function (suggestion) {
+    return suggestion.name;
+  });
+}
+
+// Function to display suggestions in the suggestions list
+function displaySuggestions(suggestions) {
+  suggestionsList.innerHTML = '';
+
+  suggestions.forEach(function (suggestion) {
+    const li = document.createElement('li');
+    li.textContent = suggestion;
+    suggestionsList.appendChild(li);
+  });
+
+  // If no suggestions are found, display "Not found"
+  if (suggestions.length === 0) {
+    const li = document.createElement('li');
+    li.textContent = 'Not found';
+    suggestionsList.appendChild(li);
+  }
+}
+
+// Function to display description when a suggestion is clicked
+function displayDescription(selectedSuggestion) {
+  // Find the selected suggestion in the data
+  const selectedSuggestionObject = suggestionsData.find(function (suggestion) {
+    return suggestion.name === selectedSuggestion;
+  });
+
+  if (selectedSuggestionObject) {
+    // Show the topic input, copy button, and description field
+    topicInput.style.display = 'block';
+    copyButton.style.display = 'block';
+    descriptionField.style.display = 'block';
+
+    // Set the description text
+    const descriptionText = selectedSuggestionObject.description;
+
+    // Check if [topic] is present in the description
+    if (descriptionText.includes("[topic]")) {
+      // Clear previous topic input and set placeholder
+      topicInput.value = '';
+      topicInput.placeholder = 'Enter a topic';
+      
+      // Update the description when the topic input changes
+      topicInput.addEventListener('input', function () {
+        const topicValue = topicInput.value;
+        const updatedDescription = descriptionText.replace(/\[topic\]/g, topicValue);
+        descriptionField.value = updatedDescription;
+      });
+    } else {
+      // If [topic] is not present, directly set the description
+      descriptionField.value = descriptionText;
+    }
+
+    // Clear the new text field when a suggestion is selected
+    topicInput.value = '';
+  }
+}
+
+// Add an input event listener to the search box
+searchBox.addEventListener('input', function (event) {
+  const inputValue = event.target.value.trim().toLowerCase();
+  // Extract names from suggestion data and filter suggestions based on the input value
+  const suggestionNames = extractNames(suggestionsData);
+  const suggestions = suggestionNames.filter(function (name) {
+    return name.toLowerCase().includes(inputValue);
+  });
+  displaySuggestions(suggestions);
+
+  // Clear the topic input, copy button, and description field when typing in search
+  topicInput.style.display = 'none';
+  copyButton.style.display = 'none';
+  descriptionField.style.display = 'none';
+  descriptionField.value = ''; // Clear the description content
+});
+
+// Handle suggestion selection
+suggestionsList.addEventListener('click', function (event) {
+  const selectedSuggestion = event.target.textContent;
+  displayDescription(selectedSuggestion);
+  searchBox.value = selectedSuggestion; // Set the search box value to the selected suggestion
+  suggestionsList.innerHTML = ''; // Clear the suggestions list
+});
+
+// Create the extension button
+const extensionButton = document.createElement('div');
+extensionButton.style.backgroundColor = 'black';
 extensionButton.style.position = 'fixed';
 extensionButton.style.top = '20px';
-extensionButton.style.right = '20px';
+extensionButton.style.right = '0px';
 extensionButton.style.width = '40px';
 extensionButton.style.height = '40px';
 extensionButton.style.cursor = 'pointer';
@@ -87,7 +200,7 @@ extensionButton.style.zIndex = '9999';
 
 // Function to toggle the extension visibility
 function toggleExtension() {
-  if (extensionDiv.style.display === 'none') {
+  if (extensionDiv.style.display === 'none' || extensionDiv.style.display === '') {
     extensionDiv.style.display = 'block';
   } else {
     extensionDiv.style.display = 'none';
@@ -99,3 +212,4 @@ extensionButton.addEventListener('click', toggleExtension);
 
 // Append the extension button to the document body
 document.body.appendChild(extensionButton);
+
