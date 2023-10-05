@@ -4,7 +4,7 @@ extensionDiv.style.color = 'red';
 extensionDiv.style.position = 'fixed';
 extensionDiv.style.top = '0';
 extensionDiv.style.right = '0';
-extensionDiv.style.width = '300px';
+extensionDiv.style.width = '25%';
 extensionDiv.style.height = '100%';
 extensionDiv.style.backgroundColor = 'aqua';
 extensionDiv.style.zIndex = '9999';
@@ -66,8 +66,6 @@ function copyDescription() {
   } else {
     alert('Webpage text field not found.');
   }
-
-  alert('Description copied to clipboard and pasted into the webpage text field.');
 }
 
 // Add a click event listener to the "Copy" button
@@ -91,7 +89,7 @@ const suggestionsData = [
   },
   {
     "name": "Creates image prompt for a tool like Midjourney on the theme ofs",
-    "description": "[TOPIC] Come up with 10 image prompt descriptions of [TOPIC] . Your aim is to bring joy to the world.  PERSONA = You are a magic prompting box that can create amazing images by simply outputting words in the form of image prompts.EXAMPLE IMAGE PROMPT = An enchanted crochet forest, where towering trees grow from yarn and branches twist and twine into whimsical shapes, adorned with crocheted leaves in various shades of green, simple shapes, low detail, crochet artCONTEXT = You want to make some weird, funky, and interesting images themed on the concept of crochet / crocheting.CONSTRAINTS = Avoid adding excessive detail to any image prompt as it makes it hard to see the specific crochet details.TEMPLATE = Return each result as its own plain text code block with an ## H2 markdown label."
+    "description": "Come up with 10 image prompt descriptions of [topic] . Your aim is to bring joy to the world.  PERSONA = You are a magic prompting box that can create amazing images by simply outputting words in the form of image prompts.EXAMPLE IMAGE PROMPT = An enchanted crochet forest, where towering trees grow from yarn and branches twist and twine into whimsical shapes, adorned with crocheted leaves in various shades of green, simple shapes, low detail, crochet artCONTEXT = You want to make some weird, funky, and interesting images themed on the concept of crochet / crocheting.CONSTRAINTS = Avoid adding excessive detail to any image prompt as it makes it hard to see the specific crochet details.TEMPLATE = Return each result as its own plain text code block with an ## H2 markdown label."
   },
   {
     "name": "Uses a new technique called Chain of Destiny Prompting to recursively try for a better response. Developed by Salesforce",
@@ -187,6 +185,7 @@ suggestionsList.addEventListener('click', function (event) {
   suggestionsList.innerHTML = ''; // Clear the suggestions list
 });
 
+
 // Create the extension button
 const extensionButton = document.createElement('div');
 extensionButton.style.backgroundColor = 'black';
@@ -198,12 +197,22 @@ extensionButton.style.height = '40px';
 extensionButton.style.cursor = 'pointer';
 extensionButton.style.zIndex = '9999';
 
+const webpageBody = document.body;
+let isResized = false;
+let extensionState = 'closed'; 
 // Function to toggle the extension visibility
 function toggleExtension() {
   if (extensionDiv.style.display === 'none' || extensionDiv.style.display === '') {
+   // Replace with your extension's actual div ID
+        // Enlarge the webpage
+        webpageBody.style.width = "75%";  // Change to your desired width// Change to your desired height
+        isResized = true;
+      searchBox.focus(); 
     extensionDiv.style.display = 'block';
   } else {
     extensionDiv.style.display = 'none';
+    webpageBody.style.width = "100%"; // Remove the width CSS property // Remove the height CSS property
+    isResized = false;
   }
 }
 
@@ -213,3 +222,39 @@ extensionButton.addEventListener('click', toggleExtension);
 // Append the extension button to the document body
 document.body.appendChild(extensionButton);
 
+let userInput = '';
+// Event listener for typing "//" or "///" in the input field
+const textarea = document.getElementById('prompt-textarea'); // Replace with your input field's actual ID
+if (textarea) {
+  textarea.addEventListener('input', function () {
+    const inputValue = textarea.value.trim();
+
+    if (inputValue === '/') {
+      // Go back to the previous state
+      if (userInput === '//' ) {
+        toggleExtension(); // Close the extension if it was opened with "//"
+      }
+      // Reset the user input
+      userInput = '';
+    } else if (inputValue === '//' && userInput === '') {
+      // Open the extension
+      toggleExtension();
+      userInput = '//'; // Track the user's input
+    }
+  });
+}
+
+
+// Define a function to open your extension
+function openExtension() {
+  toggleExtension();
+}
+
+// Listen for keydown events on the document
+document.addEventListener('keydown', function (event) {
+  // Check if the key combination matches the shortcut to open the extension
+  if (event.ctrlKey && event.shiftKey && event.key === 'E') {
+    openExtension();
+  }
+
+});
