@@ -1,6 +1,5 @@
 // Create the extension div
 const extensionDiv = document.createElement('div');
-extensionDiv.style.color = 'red';
 extensionDiv.style.position = 'fixed';
 extensionDiv.style.top = '0';
 extensionDiv.style.right = '0';
@@ -12,34 +11,49 @@ extensionDiv.style.display = 'none';
 
 // Create the title element
 const title = document.createElement('h1');
+title.style.margin = "30px 0 0 20px"
 title.innerText = 'Prompt Smith';
+title.style.color = "black";
 extensionDiv.appendChild(title);
 
 // Create the search box input element
 const searchBox = document.createElement('input');
 searchBox.type = 'text';
 searchBox.id = 'search-box';
+searchBox.style.width = '90%';
+searchBox.style.margin = "20px 20px 10px 20px"
+searchBox.style.color = "black";
 searchBox.placeholder = 'Search';
 
 // Create the suggestions list element
 const suggestionsList = document.createElement('ul');
 suggestionsList.id = 'suggestions-list';
+suggestionsList.style.marginLeft = "20px"
 
 // Create a text area for description
 const descriptionField = document.createElement('textarea');
-descriptionField.style.width = '100%';
+descriptionField.style.width = '90%';
+descriptionField.style.margin = "50px 20px 20px 20px"
 descriptionField.style.height = '200px';
 descriptionField.style.display = 'none'; // Initially hide the description
 
 // Create a text area for the topic
 const topicInput = document.createElement('textarea');
 topicInput.placeholder = 'Enter a topic';
-topicInput.style.width = '100%';
+topicInput.style.width = '90%';
+topicInput.style.color = "black";
+topicInput.style.margin = "20px 20px 50px 20px"
 topicInput.style.display = 'none'; // Initially hide the topic input
 
 // Create a "Copy" button
 const copyButton = document.createElement('button');
 copyButton.innerText = 'Copy';
+copyButton.style.backgroundColor = "black"
+copyButton.style.width = "80px";
+copyButton.style.height = "40px"
+copyButton.style.borderRadius = "5px"
+copyButton.style.color = "white"
+copyButton.style.marginLeft = "40%"
 copyButton.style.display = 'none'; // Initially hide the copy button
 
 
@@ -190,7 +204,7 @@ suggestionsList.addEventListener('click', function (event) {
 const extensionButton = document.createElement('div');
 extensionButton.style.backgroundColor = 'black';
 extensionButton.style.position = 'fixed';
-extensionButton.style.top = '20px';
+extensionButton.style.top = '40%';
 extensionButton.style.right = '0px';
 extensionButton.style.width = '40px';
 extensionButton.style.height = '40px';
@@ -205,11 +219,13 @@ function toggleExtension() {
   if (extensionDiv.style.display === 'none' || extensionDiv.style.display === '') {
    // Replace with your extension's actual div ID
         // Enlarge the webpage
+        extensionButton.style.right = "25%"
         webpageBody.style.width = "75%";  // Change to your desired width// Change to your desired height
         isResized = true;
       searchBox.focus(); 
     extensionDiv.style.display = 'block';
   } else {
+    extensionButton.style.right = "0"
     extensionDiv.style.display = 'none';
     webpageBody.style.width = "100%"; // Remove the width CSS property // Remove the height CSS property
     isResized = false;
