@@ -45,6 +45,20 @@ topicInput.style.color = "black";
 topicInput.style.margin = "20px 20px 50px 20px"
 topicInput.style.display = 'none'; // Initially hide the topic input
 
+const article = document.createElement('textarea'); // Corrected from 'textara'
+article.placeholder = 'Enter article';
+article.style.width = '90%';
+article.style.color = "black";
+article.style.margin = "20px 20px 50px 20px";
+article.style.display = 'none'; // Initially hide the article input
+
+const purchase = document.createElement('textarea');
+purchase.placeholder = 'Enter article';
+purchase.style.width = '90%';
+purchase.style.color = "black";
+purchase.style.margin = "20px 20px 50px 20px"
+purchase.style.display = 'none'; // Initially hide the purchaseinput
+
 // Create a "Copy" button
 const copyButton = document.createElement('button');
 copyButton.innerText = 'Copy';
@@ -89,11 +103,7 @@ copyButton.addEventListener('click', copyDescription);
 extensionDiv.appendChild(searchBox);
 extensionDiv.appendChild(suggestionsList);
 extensionDiv.appendChild(topicInput);
-extensionDiv.appendChild(descriptionField);
-extensionDiv.appendChild(copyButton);
 
-// Append the extension div to the document body
-document.body.appendChild(extensionDiv);
 
 // Sample suggestion data (replace this with your data)
 const suggestionsData = [
@@ -103,11 +113,11 @@ const suggestionsData = [
   },
   {
     "name": "Creates image prompt for a tool like Midjourney on the theme ofs",
-    "description": "Come up with 10 image prompt descriptions of [topic] . Your aim is to bring joy to the world.  PERSONA = You are a magic prompting box that can create amazing images by simply outputting words in the form of image prompts.EXAMPLE IMAGE PROMPT = An enchanted crochet forest, where towering trees grow from yarn and branches twist and twine into whimsical shapes, adorned with crocheted leaves in various shades of green, simple shapes, low detail, crochet artCONTEXT = You want to make some weird, funky, and interesting images themed on the concept of crochet / crocheting.CONSTRAINTS = Avoid adding excessive detail to any image prompt as it makes it hard to see the specific crochet details.TEMPLATE = Return each result as its own plain text code block with an ## H2 markdown label."
+    "description": "Come up with 10 image prompt descriptions of [topic] . Your aim is to bring joy [article] to the world.  PERSONA = You are a magic prompting box that can create amazing images by simply outputting words in the form of image prompts.EXAMPLE IMAGE PROMPT = An enchanted crochet forest, where towering trees grow from yarn and branches twist and twine into whimsical shapes, adorned with crocheted leaves in various shades of green, simple shapes, low detail, crochet artCONTEXT = You want to make some weird, funky, and interesting images themed on the concept of crochet / crocheting.CONSTRAINTS = Avoid adding excessive detail to any image prompt as it makes it hard to see the specific crochet details.TEMPLATE = Return each result as its own plain text code block with an ## H2 markdown label."
   },
   {
     "name": "Uses a new technique called Chain of Destiny Prompting to recursively try for a better response. Developed by Salesforce",
-    "description": " [topic] You will generate increasingly concise, entity-dense summaries of the above article. Repeat the following 2 steps 5 times. Step 1. Identify 1-3 informative entities (';' delimited) from the article which are missing from the previously generated summary. Step 2. Write a new, denser summary of identical length which covers every entity and detail from the previous summary plus the missing entities. A missing entity is: - relevant to the main story,  - specific yet concise (5 words or fewer), - novel (not in the previous summary), - faithful (present in the article), - anywhere (can be located anywhere in the article).Guidelines:- The first summary should be long (4-5 sentences, ~80 words) yet highly non-specific, containing little information beyond the entities marked as missing. Use overly verbose language and fillers (e.g., this article discusses) to reach ~80 words.- Make every word count: rewrite the previous summary to improve flow and make space for additional entities.- Make space with fusion, compression, and removal of uninformative phrases like the article discusses. - The summaries should become highly dense and concise yet self-contained, i.e., easily understood without the article. - Missing entities can appear anywhere in the new summary.- Never drop entities from the previous summary. If space cannot be made, add fewer new entities.  Remember, use the exact same number of words for each summary. Answer in JSON. The JSON should be a list (length 5) of dictionaries whose keys are 'Missing_Entities' and 'Denser_Summary'"
+    "description": " [topic] You will generate increasingly concise, entity-dense summaries [article] of the above article. Repeat the following 2 steps 5 times. Step 1. Identify 1-3 informative entities (';' delimited) from the article which are missing from the previously generated summary. Step 2. Write a new, denser summary of identical length which covers every entity and detail from the previous summary plus the missing entities. A missing entity is: - relevant to the main story,  - specific yet concise (5 words or fewer), - novel (not in the previous summary), - faithful (present in the article), - anywhere (can be located anywhere in the article).Guidelines:- The first summary should be long (4-5 sentences, ~80 words) yet highly non-specific, containing little information beyond the entities marked as missing. Use overly verbose language and fillers (e.g., this article discusses) to reach ~80 words.- Make every word count: rewrite the previous summary to improve flow and make space for additional entities.- Make space with fusion, compression, and removal of uninformative phrases like the article discusses. - The summaries should become highly dense and concise yet self-contained, i.e., easily understood without the article. - Missing entities can appear anywhere in the new summary.- Never drop entities from the previous summary. If space cannot be made, add fewer new entities.  Remember, use the exact same number of words for each summary. Answer in JSON. The JSON should be a list (length 5) of dictionaries whose keys are 'Missing_Entities' and 'Denser_Summary'"
   },
 ];
 
@@ -136,7 +146,6 @@ function displaySuggestions(suggestions) {
   }
 }
 
-// Function to display description when a suggestion is clicked
 function displayDescription(selectedSuggestion) {
   // Find the selected suggestion in the data
   const selectedSuggestionObject = suggestionsData.find(function (suggestion) {
@@ -146,6 +155,7 @@ function displayDescription(selectedSuggestion) {
   if (selectedSuggestionObject) {
     // Show the topic input, copy button, and description field
     topicInput.style.display = 'block';
+    article.style.display = 'block';
     copyButton.style.display = 'block';
     descriptionField.style.display = 'block';
 
@@ -157,20 +167,46 @@ function displayDescription(selectedSuggestion) {
       // Clear previous topic input and set placeholder
       topicInput.value = '';
       topicInput.placeholder = 'Enter a topic';
-      
+
       // Update the description when the topic input changes
       topicInput.addEventListener('input', function () {
         const topicValue = topicInput.value;
         const updatedDescription = descriptionText.replace(/\[topic\]/g, topicValue);
-        descriptionField.value = updatedDescription;
+        // Replace [article] as well
+        const finalDescription = updatedDescription.replace(/\[article\]/g, article.value);
+        descriptionField.value = finalDescription;
       });
     } else {
       // If [topic] is not present, directly set the description
       descriptionField.value = descriptionText;
     }
 
+    // Check if [article] is present in the description
+    if (descriptionText.includes("[article]")) {
+      // Clear previous article input and set placeholder
+      extensionDiv.appendChild(article);
+      article.value = '';
+      article.placeholder = 'Enter an article';
+
+      // Update the description when the article input changes
+      article.addEventListener('input', function () {
+        const articleValue = article.value;
+        const updatedDescription = descriptionText.replace(/\[article\]/g, articleValue);
+        // Replace [topic] as well
+        const finalDescription = updatedDescription.replace(/\[topic\]/g, topicInput.value);
+        descriptionField.value = finalDescription;
+      });
+    } else {
+      // If [article] is not present, directly set the description
+      extensionDiv.removeChild(article)
+      descriptionField.value = descriptionText;
+    }
+
     // Clear the new text field when a suggestion is selected
     topicInput.value = '';
+    article.value = '';
+  extensionDiv.appendChild(descriptionField);
+  extensionDiv.appendChild(copyButton);
   }
 }
 
@@ -186,6 +222,7 @@ searchBox.addEventListener('input', function (event) {
 
   // Clear the topic input, copy button, and description field when typing in search
   topicInput.style.display = 'none';
+  article.style.display = 'none'
   copyButton.style.display = 'none';
   descriptionField.style.display = 'none';
   descriptionField.value = ''; // Clear the description content
@@ -199,6 +236,9 @@ suggestionsList.addEventListener('click', function (event) {
   suggestionsList.innerHTML = ''; // Clear the suggestions list
 });
 
+
+// Append the extension div to the document body
+document.body.appendChild(extensionDiv);
 
 // Create the extension button
 const extensionButton = document.createElement('div');
